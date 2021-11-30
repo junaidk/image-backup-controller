@@ -1,0 +1,6 @@
+domain: junaidk.io
+layout:
+- go.kubebuilder.io/v3
+projectName: image-backup-controller
+repo: github.com/junaidk/image-backup-controller
+version: "3"
