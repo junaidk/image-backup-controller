@@ -38,9 +38,15 @@ spec:
         - name: BACKUP_REGISTRY_URL
           value: "index.docker.io"
         - name: BACKUP_REGISTRY_USERNAME
-          value: "junaidk"
+          valueFrom:
+            secretKeyRef:
+              name: registry-creds
+              key: username
         - name: BACKUP_REGISTRY_PASSWORD
-          value: "aae4f2b6-2f5d-4e9a-9611-f8d178c144dc"
+          valueFrom:
+            secretKeyRef:
+              name: registry-creds
+              key: password
         - name: IGNORE_NAMESPACES
           value: "kube-system,kube-public,kube-node-lease,image-backup-controller-system"
         securityContext:

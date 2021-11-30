@@ -43,11 +43,10 @@ type DaemonsetImageBackupReconciler struct {
 //+kubebuilder:rbac:groups=apps,resources=daemonset,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=apps,resources=daemonset/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=apps,resources=daemonset/finalizers,verbs=update
-//+kubebuilder:rbac:groups=,resources=secrets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
 // the ImageBackup object against the actual cluster state, and then
 // perform operations to make the cluster state reflect the state specified by
 // the user.
@@ -132,7 +131,7 @@ func (r *DaemonsetImageBackupReconciler) Reconcile(ctx context.Context, req ctrl
 	}
 
 	// update image name in daemonset
-	for i, _ := range daemonset.Spec.Template.Spec.Containers {
+	for i := range daemonset.Spec.Template.Spec.Containers {
 		if true {
 			daemonset.Spec.Template.Spec.Containers[i].Image = dstImages[i]
 		}

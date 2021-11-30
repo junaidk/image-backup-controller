@@ -76,25 +76,30 @@ func main() {
 		os.Exit(1)
 	}
 
-	backUpRegistryURL, err := controllers.GetBackUpRegistryURL()
+	backUpRegistryURL, err := controllers.GetBackUpRegistryURLEnv()
 	if err != nil {
 		setupLog.Error(err, "unable to get backUpRegistryURL")
 		os.Exit(1)
 	}
 
-	backupRegistryUserName, err := controllers.GetBackUpRegistryUserName()
+	backupRegistryUserName, err := controllers.GetBackUpRegistryUserNameEnv()
 	if err != nil {
 		setupLog.Error(err, "unable to get backupRegistryUserName")
 		os.Exit(1)
 	}
 
-	backUpRegistryPassword, err := controllers.GetBackUpRegistryPassword()
+	backUpRegistryPassword, err := controllers.GetBackUpRegistryPasswordEnv()
 	if err != nil {
 		setupLog.Error(err, "unable to get backUpRegistryPassword")
 		os.Exit(1)
 	}
 
-	ignoreNamespaces := controllers.GetIgnoreNamespaces()
+	ignoreNamespaces := controllers.GetIgnoreNamespacesEnv()
+
+	controllerNamespace := controllers.GetPodNameSpaceEnv()
+	if controllerNamespace != "" {
+		ignoreNamespaces = append(ignoreNamespaces, controllerNamespace)
+	}
 
 	containerRegistryManger := &controllers.ContainerRegistryManager{}
 

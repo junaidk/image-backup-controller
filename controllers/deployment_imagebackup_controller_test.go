@@ -31,13 +31,6 @@ var _ = Describe("Deployment Controller Test", func() {
 		interval                      = time.Millisecond * 250
 	)
 
-	BeforeEach(func() {
-		// Add any setup steps that needs to be executed before each test
-	})
-
-	AfterEach(func() {
-	})
-
 	var actualSrcImageNames, actualDstImageNames []string
 	var actualSrcRegistryCredentials []*RegistryCredentials
 	var actualDstRegistryCredentials *RegistryCredentials
@@ -56,6 +49,30 @@ var _ = Describe("Deployment Controller Test", func() {
 			ns := &corev1.Namespace{}
 			ns.Name = DeploymentNamespace
 			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
+
+			secret1 := &corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "secret1-deployment",
+					Namespace: DeploymentNamespace,
+				},
+				Type: "kubernetes.io/dockerconfigjson",
+				Data: map[string][]byte{
+					".dockerconfigjson": SrcRegAuth1,
+				},
+			}
+			Expect(k8sClient.Create(context.Background(), secret1)).Should(Succeed())
+
+			secret2 := &corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "secret2-deployment",
+					Namespace: DeploymentNamespace,
+				},
+				Type: "kubernetes.io/dockerconfigjson",
+				Data: map[string][]byte{
+					".dockerconfigjson": SrcRegAuth2,
+				},
+			}
+			Expect(k8sClient.Create(context.Background(), secret2)).Should(Succeed())
 
 			// Create
 			deployment := &appsv1.Deployment{
@@ -93,30 +110,6 @@ var _ = Describe("Deployment Controller Test", func() {
 				},
 			}
 			Expect(k8sClient.Create(context.Background(), deployment)).Should(Succeed())
-
-			secret1 := &corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "secret1-deployment",
-					Namespace: DeploymentNamespace,
-				},
-				Type: "kubernetes.io/dockerconfigjson",
-				Data: map[string][]byte{
-					".dockerconfigjson": SrcRegAuth1,
-				},
-			}
-			Expect(k8sClient.Create(context.Background(), secret1)).Should(Succeed())
-
-			secret2 := &corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "secret2-deployment",
-					Namespace: DeploymentNamespace,
-				},
-				Type: "kubernetes.io/dockerconfigjson",
-				Data: map[string][]byte{
-					".dockerconfigjson": SrcRegAuth2,
-				},
-			}
-			Expect(k8sClient.Create(context.Background(), secret2)).Should(Succeed())
 
 			deploymentLookupKey := types.NamespacedName{Name: DeploymentName, Namespace: DeploymentNamespace}
 			createdDeployment := &appsv1.Deployment{}

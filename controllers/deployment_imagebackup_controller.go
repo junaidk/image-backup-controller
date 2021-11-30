@@ -43,11 +43,10 @@ type DeploymentImageBackupReconciler struct {
 //+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=apps,resources=deployments/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=apps,resources=deployments/finalizers,verbs=update
-//+kubebuilder:rbac:groups=,resources=secrets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
 // the ImageBackup object against the actual cluster state, and then
 // perform operations to make the cluster state reflect the state specified by
 // the user.
@@ -132,7 +131,7 @@ func (r *DeploymentImageBackupReconciler) Reconcile(ctx context.Context, req ctr
 	}
 
 	// update image name in deployment
-	for i, _ := range deployment.Spec.Template.Spec.Containers {
+	for i := range deployment.Spec.Template.Spec.Containers {
 		if true {
 			deployment.Spec.Template.Spec.Containers[i].Image = dstImages[i]
 		}

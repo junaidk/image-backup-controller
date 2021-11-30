@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"time"
 
 	//"time"
 
-	//"github.com/containers/common/pkg/retry"
+	"github.com/containers/common/pkg/retry"
 	"github.com/containers/image/v5/copy"
 	"github.com/containers/image/v5/signature"
 
@@ -70,26 +71,16 @@ func (c *ContainerRegistryManager) CopyImage(ctx context.Context, srcImage, dstI
 		},
 	}
 
-	_, err = copy.Image(ctx, policyCtx, destRef, srcRef, &copy.Options{
-		SourceCtx:      srcCtx,
-		DestinationCtx: dstCtx,
-		ReportWriter:   os.Stdout,
-	})
+	return retry.RetryIfNecessary(ctx, func() error {
+		_, err = copy.Image(ctx, policyCtx, destRef, srcRef, &copy.Options{
+			SourceCtx:      srcCtx,
+			DestinationCtx: dstCtx,
+			ReportWriter:   os.Stdout,
+		})
+		if err != nil {
+			return err
+		}
 
-	//return retry.RetryIfNecessary(ctx, func() error {
-	//	_, err := copy.Image(ctx, policyCtx, destRef, srcRef, &copy.Options{
-	//		SourceCtx: &types.SystemContext{
-	//			OSChoice:      "linux",
-	//			VariantChoice: "amd64",
-	//		},
-	//		ReportWriter: os.Stdout,
-	//	})
-	//	if err != nil {
-	//		return err
-	//	}
-	//
-	//	return nil
-	//}, &retry.RetryOptions{MaxRetry: 1, Delay: time.Second * 5})
-
-	return err
+		return nil
+	}, &retry.RetryOptions{MaxRetry: 1, Delay: time.Second * 5})
 }
